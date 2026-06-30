@@ -1,0 +1,13 @@
+id: hello_python
+namespace: company.team
+
+tasks:
+  - id: hello
+    type: io.kestra.plugin.scripts.python.Script
+    script: |
+      print("Hello, Kestra!")
+
+      for i in range(5):
+          print(i)
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
