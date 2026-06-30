@@ -1,0 +1,97 @@
+id: file_unlock_checker
+namespace: company.security
+
+inputs:
+  - id: uploaded_file
+    type: FILE
+
+  - id: file_type
+    type: STRING
+
+  - id: password
+    type: STRING
+    required: false
+
+tasks:
+  - id: check_file
+    type: io.kestra.plugin.scripts.shell.Commands
+    runner: PROCESS
+    inputFiles:
+      "input_file.{{ inputs.file_type }}": "{{ inputs.uploaded_file }}"
+
+      script.py: |
+        import os
+        import json
+        from pypdf import PdfReader
+        import pyzipper
+        filepath = "input_file.{{ inputs.file_type }}"
+        password = "{{ inputs.password }}"
+
+        filename = os.path.basename(filepath)
+        ext = os.path.splitext(filename)[1].lower()
+
+        result = {
+            "file": filename,
+            "status": ""
+        }
+
+        try:
+
+            if ext == ".pdf":
+
+                reader = PdfReader(filepath)
+
+                if reader.is_encrypted:
+
+                    if not password:
+                        result["status"] = "locked_no_password"
+
+                    else:
+                        ok = reader.decrypt(password)
+
+                        if ok:
+                            result["status"] = "unlock_success"
+                        else:
+                            result["status"] = "unlock_failed"
+
+                else:
+
+                    if password:
+                        result["status"] = "password_given_but_not_needed"
+                    else:
+                        result["status"] = "unlocked_no_password_needed"
+
+            elif ext == ".zip":
+
+                with pyzipper.AESZipFile(filepath) as zf:
+
+                    if not password:
+
+                        try:
+                            zf.testzip()
+                            result["status"] = "unlocked_no_password_needed"
+
+                        except RuntimeError:
+                            result["status"] = "locked_no_password"
+
+                    else:
+
+                        try:
+                            zf.setpassword(password.encode())
+                            zf.testzip()
+                            result["status"] = "unlock_success"
+
+                        except RuntimeError:
+                            result["status"] = "unlock_failed"
+
+            else:
+                result["status"] = "unsupported_file_type"
+
+        except Exception as e:
+            result["status"] = f"processing_error: {str(e)}"
+
+        print(json.dumps(result, indent=2))
+
+    commands:
+      - pip3 install pypdf pyzipper
+      - python3 script.py
