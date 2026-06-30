@@ -1,0 +1,12 @@
+id: hello_world
+namespace: company.ops
+
+tasks:
+
+  - id: generate_token_id
+    type: io.kestra.plugin.core.http.Request
+    uri: https://login.microsoftonline.com/74afe875-305e-4ab4-ba4a-c1359a7629ae/oauth2/v2.0/token
+    method: POST
+    contentType: application/x-www-form-urlencoded
+    
+ 
