@@ -7,6 +7,10 @@ tasks:
     uri: https://login.microsoftonline.com/74afe875-305e-4ab4-ba4a-c1359a7629ae/oauth2/v2.0/token
     method: POST
     contentType: application/x-www-form-urlencoded
+    body: "client_id={{ kv('client_id') }}
+      &client_secret={{ kv('client_secret') }}
+      &scope=https://graph.microsoft.com/.default
+      &grant_type=client_credentials"
 
 
   - id: fetch_unread_emails
