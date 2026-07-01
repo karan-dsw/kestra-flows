@@ -11,8 +11,8 @@ tasks:
     type: io.kestra.plugin.core.debug.Return
     format: |
       {
-        "filename": "sample.pdf",
-        "password": "1234"
+        "filename": "sample2_123344.pdf",
+        "password": "1234567890"
       }
 
   - id: check_file
