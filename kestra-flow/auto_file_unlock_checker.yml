@@ -34,7 +34,7 @@ tasks:
         import pyzipper
 
         # Read previous task output
-        #previous_output = json.loads('''{{ outputs.previous_task.value }}''')
+        previous_output = json.loads('''{{ outputs.previous_task.value }}''')
 
         filename = previous_output.get("filename", "")
         password = previous_output.get("password", "")
