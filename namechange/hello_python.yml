@@ -5,7 +5,7 @@ tasks:
   - id: hello
     type: io.kestra.plugin.scripts.python.Script
     script: |
-      print("Hello, Kestra!")
+      print("Hello, Kestra! my name is karan")
 
       for i in range(5):
           print(i)
